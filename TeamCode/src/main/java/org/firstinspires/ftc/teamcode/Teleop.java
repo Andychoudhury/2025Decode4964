@@ -186,6 +186,10 @@ public class Teleop extends LinearOpMode {
             else {
                 servo.setPower(0);
             }
+            if (gamepad2.b) {
+            servo.setPower(-1);
+            shooterPower = -.45;
+            }
 
 
             // This is test code:
