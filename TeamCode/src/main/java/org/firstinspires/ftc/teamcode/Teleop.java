@@ -173,14 +173,14 @@ public class Teleop extends LinearOpMode {
 
             /** Shooters **/
             double shooterPower;
-            if (gamepad2.right_bumper) {
-                shooterPower = .5;
+            if (gamepad2.right_bumper || (gamepad2.right_trigger>0)) {
+                shooterPower = .45;
             }
             else {
                 shooterPower = 0;
             }
 
-            if (gamepad2.left_bumper) {
+            if (gamepad2.left_bumper || (gamepad2.left_trigger>0)) {
                 servo.setPower(1);
             }
             else {
