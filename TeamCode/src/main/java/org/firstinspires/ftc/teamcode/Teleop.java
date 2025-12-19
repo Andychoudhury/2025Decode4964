@@ -174,7 +174,7 @@ public class Teleop extends LinearOpMode {
             /** Shooters **/
             double shooterPower;
             if (gamepad2.right_bumper || (gamepad2.right_trigger>0)) {
-                shooterPower = .45;
+                shooterPower = .40;
             }
             else {
                 shooterPower = 0;
