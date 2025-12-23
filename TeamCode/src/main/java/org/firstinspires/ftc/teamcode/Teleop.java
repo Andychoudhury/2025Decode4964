@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -77,8 +78,8 @@ public class Teleop extends LinearOpMode {
     private DcMotor frontRightDrive = null;
     private DcMotor backRightDrive = null;
 
-    private DcMotor rightShooter = null;
-    private DcMotor leftShooter = null;
+    private DcMotorEx rightShooter = null;
+    private DcMotorEx leftShooter = null;
 
     private CRServo servo = null;
 
@@ -91,8 +92,8 @@ public class Teleop extends LinearOpMode {
         backLeftDrive = hardwareMap.get(DcMotor.class, "BackLeft");
         frontRightDrive = hardwareMap.get(DcMotor.class, "FrontRight");
         backRightDrive = hardwareMap.get(DcMotor.class, "BackRight");
-        leftShooter = hardwareMap.get(DcMotor.class,"LeftShooter");
-        rightShooter = hardwareMap.get(DcMotor.class,"RightShooter");
+        leftShooter = hardwareMap.get(DcMotorEx.class,"LeftShooter");
+        rightShooter = hardwareMap.get(DcMotorEx.class,"RightShooter");
         servo = hardwareMap.get(CRServo.class,"servo");
 
         // ########################################################################################
@@ -120,6 +121,9 @@ public class Teleop extends LinearOpMode {
         leftShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        leftShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         double speedMultiplier = 1;
 
         // Wait for the game to start (driver presses START)
@@ -135,21 +139,21 @@ public class Teleop extends LinearOpMode {
             double max;
 
             if (gamepad1.a) {
-                speedMultiplier = .75;
+                speedMultiplier = 0.75;
             }
             if (gamepad1.b) {
-                speedMultiplier = .5;
+                speedMultiplier = 0.50;
             }
             if (gamepad1.x) {
-                speedMultiplier = .25;
+                speedMultiplier = 0.25;
             }
             if (gamepad1.right_bumper) {
-                speedMultiplier = 1.0;
+                speedMultiplier = 1.00;
             }
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial   = -gamepad1.left_stick_y * speedMultiplier;  // Note: pushing stick forward gives negative value
-            double lateral =  gamepad1.left_stick_x * speedMultiplier;
-            double yaw     =  gamepad1.right_stick_x * speedMultiplier;
+            double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+            double lateral =  gamepad1.left_stick_x;
+            double yaw     =  gamepad1.right_stick_x;
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
@@ -157,6 +161,11 @@ public class Teleop extends LinearOpMode {
             double frontRightPower = axial - lateral - yaw;
             double backLeftPower   = axial - lateral + yaw;
             double backRightPower  = axial + lateral - yaw;
+
+            frontLeftPower *= speedMultiplier;
+            frontRightPower *= speedMultiplier;
+            backLeftPower *= speedMultiplier;
+            backRightPower *= speedMultiplier;
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
@@ -174,7 +183,7 @@ public class Teleop extends LinearOpMode {
             /** Shooters **/
             double shooterPower;
             if (gamepad2.right_bumper || (gamepad2.right_trigger>0)) {
-                shooterPower = .40;
+                shooterPower = 933;
             }
             else {
                 shooterPower = 0;
@@ -214,11 +223,14 @@ public class Teleop extends LinearOpMode {
             frontRightDrive.setPower(frontRightPower);
             backLeftDrive.setPower(backLeftPower);
             backRightDrive.setPower(backRightPower);
-            leftShooter.setPower(shooterPower);
-            rightShooter.setPower(shooterPower);
+            leftShooter.setVelocity(shooterPower);
+            rightShooter.setVelocity(shooterPower);
+//            leftShooter.setPower(shooterPower);
+//            rightShooter.setPower(shooterPower);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Speed Multiplier",speedMultiplier);
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
             telemetry.addData("Shooters","%4.2f",shooterPower);
