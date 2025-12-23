@@ -33,6 +33,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -43,8 +44,8 @@ public class RedAuto extends LinearOpMode {
     DcMotor frontright = null;
     DcMotor backleft = null;
     DcMotor backright = null;
-    DcMotor leftShooter = null;
-    DcMotor rightShooter = null;
+    DcMotorEx leftShooter = null;
+    DcMotorEx rightShooter = null;
     CRServo servo = null;
     ElapsedTime runtime = new ElapsedTime();
 
@@ -66,8 +67,8 @@ public class RedAuto extends LinearOpMode {
         frontright = hardwareMap.dcMotor.get("FrontRight");
         backleft = hardwareMap.dcMotor.get("BackLeft");
         backright = hardwareMap.dcMotor.get("BackRight");
-        leftShooter = hardwareMap.dcMotor.get("LeftShooter");
-        rightShooter = hardwareMap.dcMotor.get("RightShooter");
+        leftShooter = hardwareMap.get(DcMotorEx.class,"LeftShooter");
+        rightShooter = hardwareMap.get(DcMotorEx.class,"RightShooter");
         servo = hardwareMap.crservo.get("servo");
 
 
@@ -83,8 +84,8 @@ public class RedAuto extends LinearOpMode {
         backright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        leftShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        rightShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         frontleft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backright.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -109,24 +110,31 @@ public class RedAuto extends LinearOpMode {
         //NEGATIVE TURN IS LEFT, POSITIVE TURN IS RIGHT
 
         //input list of movement commands.  Can tune sleep between commands to minimize wait between moves or ensure complete motion.
-        moveToPosition(-55,.5);
-        leftShooter.setPower(.45);
-        rightShooter.setPower(.45);
+//        moveToPosition(-55,.5);
+        leftShooter.setVelocity(933);
+        rightShooter.setVelocity(933);
         sleep(2000);
-        servo.setPower(1);
-        sleep(75);
-        servo.setPower(0);
+//        servo.setPower(1);
+//        sleep(150);
+//        servo.setPower(0);
+//        sleep(2000);
+//        servo.setPower(1);
+//        sleep(150);
+//        servo.setPower(0);
+//        sleep(2000);
+//        servo.setPower(1);
+//        sleep(2000);
+        shoot(1200);
         sleep(1000);
-        servo.setPower(1);
-        sleep(75);
-        servo.setPower(0);
-        sleep(2000);
-        servo.setPower(1);
-        sleep(2000);
+        shoot(300);
+        sleep(1000);
+        shoot(300);
         leftShooter.setPower(0);
         rightShooter.setPower(0);
-        servo.setPower(0);
-        strafeToPosition(-10,.5);
+//        strafeToPosition(-10,.5);
+
+
+
         //
         // strafeToPosition();
 
@@ -275,6 +283,18 @@ public class RedAuto extends LinearOpMode {
         backleft.setPower(0);
         //return;
     }
+
+    public void shoot(int time) {
+        runtime.reset();
+        servo.setPower(1);
+        while (servo.getPower() != 0){
+            if (exit || runtime.milliseconds()>time) {
+                servo.setPower(0);
+            }
+        }
+        servo.setPower(0);
+    }
+
 
 
 
