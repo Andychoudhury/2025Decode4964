@@ -125,6 +125,7 @@ public class Teleop extends LinearOpMode {
         rightShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         double speedMultiplier = 1;
+        boolean highSpeed = false;
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
@@ -181,9 +182,22 @@ public class Teleop extends LinearOpMode {
             }
 
             /** Shooters **/
+            if (gamepad2.a) {
+                highSpeed = false;
+            }
+
+            if (gamepad2.x) {
+                highSpeed = true;
+            }
+
             double shooterPower;
             if (gamepad2.right_bumper || (gamepad2.right_trigger>0)) {
-                shooterPower = 933;
+                if (highSpeed) {
+                    shooterPower = 933;
+                }
+                else {
+                    shooterPower = 750;
+                }
             }
             else {
                 shooterPower = 0;
@@ -233,7 +247,8 @@ public class Teleop extends LinearOpMode {
             telemetry.addData("Speed Multiplier",speedMultiplier);
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
-            telemetry.addData("Shooters","%4.2f",shooterPower);
+            telemetry.addData("High speed: ",highSpeed);
+            telemetry.addData("Shooters","%4.2f",leftShooter.getVelocity());
             telemetry.addData("Servo Power",servo.getPower());
             telemetry.update();
         }
