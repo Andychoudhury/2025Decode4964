@@ -110,28 +110,31 @@ public class RedAuto extends LinearOpMode {
         //NEGATIVE TURN IS LEFT, POSITIVE TURN IS RIGHT
 
         //input list of movement commands.  Can tune sleep between commands to minimize wait between moves or ensure complete motion.
-//        moveToPosition(-55,.5);
-        leftShooter.setVelocity(933);
-        rightShooter.setVelocity(933);
-        sleep(2000);
-//        servo.setPower(1);
-//        sleep(150);
-//        servo.setPower(0);
+        moveToPosition(-65,.5);
+        shoot(760);
+//        leftShooter.setVelocity(933);
+//        rightShooter.setVelocity(933);
 //        sleep(2000);
 //        servo.setPower(1);
 //        sleep(150);
 //        servo.setPower(0);
 //        sleep(2000);
 //        servo.setPower(1);
+//        sleep(150);
+//        servo.setPower(0);
 //        sleep(2000);
-        shoot(1200);
-        sleep(1000);
-        shoot(300);
-        sleep(1000);
-        shoot(300);
-        leftShooter.setPower(0);
-        rightShooter.setPower(0);
-//        strafeToPosition(-10,.5);
+//        servo.setPower(1);
+//        sleep(2000);
+//        shoot(1200);
+//        sleep(1000);
+//        shoot(300);
+//        sleep(1000);
+//        shoot(300);
+//        leftShooter.setPower(0);
+//        rightShooter.setPower(0);
+        strafeToPosition(-10,.5);
+
+
 
 
 
@@ -284,15 +287,37 @@ public class RedAuto extends LinearOpMode {
         //return;
     }
 
-    public void shoot(int time) {
+    public void shoot(int velocity) {
         runtime.reset();
-        servo.setPower(1);
-        while (servo.getPower() != 0){
-            if (exit || runtime.milliseconds()>time) {
+        int skib = 0;
+        while (opModeIsActive() && runtime.milliseconds()<11500) {
+            leftShooter.setVelocity(velocity);
+            rightShooter.setVelocity(velocity);
+            if (runtime.milliseconds()>7000 && runtime.milliseconds()<8200) {
+                servo.setPower(1);
+                skib = 1;
+            }
+            if (runtime.milliseconds()> 8200 && runtime.milliseconds()<9200) {
                 servo.setPower(0);
             }
+            if (runtime.milliseconds()>9200 && runtime.milliseconds()<9500) {
+                servo.setPower(1);
+                skib = 2;
+            }
+            if (runtime.milliseconds()>9500 && runtime.milliseconds()<10500) {
+                servo.setPower(0);
+            }
+            if (runtime.milliseconds()>10500 && runtime.milliseconds()<11500) {
+                servo.setPower(1);
+                skib = 3;
+            }
+            telemetry.addData("number: ",skib);
+            telemetry.addData("Velocity",leftShooter.getVelocity());
+            telemetry.addData("runtime",runtime.seconds());
+            telemetry.update();
         }
-        servo.setPower(0);
+        leftShooter.setPower(0);
+        rightShooter.setPower(0);
     }
 
 
