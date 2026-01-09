@@ -182,22 +182,12 @@ public class Teleop extends LinearOpMode {
             }
 
             /** Shooters **/
-            if (gamepad2.a) {
-                highSpeed = false;
-            }
-
-            if (gamepad2.x) {
-                highSpeed = true;
-            }
-
             double shooterPower;
-            if (gamepad2.right_bumper || (gamepad2.right_trigger>0)) {
-                if (highSpeed) {
-                    shooterPower = 933;
-                }
-                else {
-                    shooterPower = 750;
-                }
+            if (gamepad2.right_bumper) {
+                shooterPower = 933;
+            }
+            else if (gamepad2.right_trigger>0) {
+                shooterPower = 750;
             }
             else {
                 shooterPower = 0;
