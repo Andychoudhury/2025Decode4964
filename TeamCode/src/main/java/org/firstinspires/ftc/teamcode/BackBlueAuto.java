@@ -110,7 +110,7 @@ public class BackBlueAuto extends LinearOpMode {
         //NEGATIVE TURN IS LEFT, POSITIVE TURN IS RIGHT
 
         //input list of movement commands.  Can tune sleep between commands to minimize wait between moves or ensure complete motion.
-        shoot(900);
+        shoot(850);
         moveToPosition(10,.5);
 
 
