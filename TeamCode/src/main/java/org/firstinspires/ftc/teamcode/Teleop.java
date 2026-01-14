@@ -36,6 +36,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -121,8 +122,16 @@ public class Teleop extends LinearOpMode {
         leftShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        leftShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        rightShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        PIDFCoefficients pid = new PIDFCoefficients(25,2.25,10.00,0);
+
+        leftShooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,pid);
+        rightShooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,pid);
+
+        PIDFCoefficients pid1 = leftShooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+        PIDFCoefficients pid2 = rightShooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
 
         double speedMultiplier = 1;
         boolean highSpeed = false;
@@ -175,10 +184,10 @@ public class Teleop extends LinearOpMode {
             max = Math.max(max, Math.abs(backRightPower));
 
             if (max > speedMultiplier) {
-                frontLeftPower  /= max;
-                frontRightPower /= max;
-                backLeftPower   /= max;
-                backRightPower  /= max;
+                frontLeftPower  /= (max/speedMultiplier);
+                frontRightPower /= (max/speedMultiplier);
+                backLeftPower   /= (max/speedMultiplier);
+                backRightPower  /= (max/speedMultiplier);
             }
 
             /** Shooters **/
@@ -240,6 +249,7 @@ public class Teleop extends LinearOpMode {
             telemetry.addData("High speed: ",highSpeed);
             telemetry.addData("Shooters","%4.2f",leftShooter.getVelocity());
             telemetry.addData("Servo Power",servo.getPower());
+            telemetry.addData("PID","%4.2f, %4.2f, %4.2f, %4.2f", pid1.p, pid1.i, pid1.d, pid1.f);
             telemetry.update();
         }
     }}
