@@ -111,7 +111,9 @@ public class BackRedAuto extends LinearOpMode {
 
         //input list of movement commands.  Can tune sleep between commands to minimize wait between moves or ensure complete motion.
         shoot(850);
-        moveToPosition(10,.5);
+        turnWithEncoder(-22,.4);
+        sleep(200);
+        strafeToPosition(-7,.4);
 
 
 
